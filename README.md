@@ -1,0 +1,7 @@
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_1.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_2.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_3.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_4.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_5.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_6.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_7.jpg)
