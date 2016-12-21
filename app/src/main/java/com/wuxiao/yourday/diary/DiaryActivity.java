@@ -38,7 +38,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscription;
 import rx.functions.Action1;
 
 import static com.wuxiao.yourday.common.popup.WeatherPopup.getMenu;
@@ -76,7 +75,7 @@ public class DiaryActivity extends BaseActivity<DiaryPresenter> implements Diary
     private AMapLocationClient client;
     private StringBuilder update_location;
     private String lastLocation;
-    private Subscription subscribe;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -207,7 +206,7 @@ public class DiaryActivity extends BaseActivity<DiaryPresenter> implements Diary
         List<EditTextData> editList = note_rich.GetEditData();
 
         final StringBuilder content = new StringBuilder();
-        subscribe = Observable.from(editList).subscribe(new Action1<EditTextData>() {
+        Observable.from(editList).subscribe(new Action1<EditTextData>() {
             @Override
             public void call(EditTextData data) {
                 if (data.getInputStr() != null) {
