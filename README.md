@@ -6,7 +6,7 @@
       </br>     进行云备份,日记交换功能（服务端准备用GO写，也会开源）
    </br>希望大家支持！！！
 </br>
-##在目录有打开的包文件YourDay/app/app-release.apk
+##下载链接  <a href="https://github.com/quiet-wuxiao/YourDay/blob/master/app/app-release.apk?raw=true"><strong>app-release.apk</strong></a>
 </br>
 ![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_1.jpg)
 ![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_2.jpg)
