@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">YourDay</string>
+    <string name="note_title">开始写日记</string>
+    <array name="months_name">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </array>
+    <array name="days_name">
+
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+
+    </array>
+
+    <array name="weeks_name">
+        <item>Sun.</item>
+        <item>Mon.</item>
+        <item>Tue.</item>
+        <item>Wed.</item>
+        <item>Thu.</item>
+        <item>Fri.</item>
+        <item>Sat.</item>
+    </array>
+    <string name="title">title</string>
+    <string name="note_content">content</string>
+    <string name="title_hint">title</string>
+    <string name="content_hint">content</string>
+    <string name="diary_empty">content or title is empty</string>
+    <string name="loading">Loading...</string>
+    <string name="load_failed">load more failed</string>
+    <string name="load_end">No more data</string>
+    <string name="change_theme">Theme is changing&#8230;</string>
+</resources>

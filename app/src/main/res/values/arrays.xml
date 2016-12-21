@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="weather_icon">
+        <item>@drawable/weather_07</item>
+        <item>@drawable/weather_02</item>
+        <item>@drawable/weather_03</item>
+        <item>@drawable/weather_04</item>
+        <item>@drawable/weather_05</item>
+        <item>@drawable/weather_06</item>
+        <item>@drawable/weather_01</item>
+        <item>@drawable/weather_08</item>
+        <item>@drawable/weather_09</item>
+        <item>@drawable/weather_10</item>
+        <item>@drawable/weather_11</item>
+        <item>@drawable/weather_12</item>
+        <item>@drawable/weather_13</item>
+        <item>@drawable/weather_14</item>
+        <item>@drawable/weather_15</item>
+        <item>@drawable/weather_16</item>
+    </string-array>
+
+</resources>

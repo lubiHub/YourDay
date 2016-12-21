@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:tl="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white">
+        <com.wuxiao.yourday.tab.HomeTabLayout
+            android:id="@+id/home_tl"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/y60"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/y15"
+            android:layout_marginBottom="@dimen/y15"
+            tl:tl_bar_color="#ffffff"
+            tl:tl_indicator_corner_radius="@dimen/y5"
+            tl:tl_tab_padding="@dimen/x60"/>
+    </FrameLayout>
+
+    <com.wuxiao.yourday.viewpager.FragmentViewPager
+        android:id="@+id/home_vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>
