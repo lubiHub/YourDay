@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YourDay</string>
+    <string name="app_name">YouDay</string>
     <string name="note_title">开始写日记</string>
     <array name="months_name">
         <item>January</item>

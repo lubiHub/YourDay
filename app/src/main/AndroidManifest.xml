@@ -73,7 +73,7 @@
     <application
         android:name=".YourDayApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/day"
         android:label="@string/app_name"
         android:screenOrientation="portrait"
         android:supportsRtl="true">

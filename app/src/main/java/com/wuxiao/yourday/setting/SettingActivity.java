@@ -42,7 +42,7 @@ public class SettingActivity extends Activity implements View.OnClickListener {
         pay = (ImageView) findViewById(R.id.pay);
         pay_text = (TextView) findViewById(R.id.pay_text);
         pay_text.setOnClickListener(this);
-        theme_two.setOnClickListener(this);
+        theme_one.setOnClickListener(this);
         theme_two.setOnClickListener(this);
 
     }
