@@ -25,7 +25,7 @@ public class AMapLocationManager {
                     locationOption.setOnceLocation(false);
                     locationOption.setNeedAddress(true);
                     locationOption.setGpsFirst(false);
-                    locationOption.setInterval(60000);
+                    locationOption.setInterval(10000);
                     mInstance.setLocationOption(locationOption);
                 }
             }

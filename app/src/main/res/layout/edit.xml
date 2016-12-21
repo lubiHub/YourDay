@@ -5,9 +5,11 @@
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:cursorVisible="true"
-    android:lineSpacingExtra="10dp"
+    android:paddingBottom="@dimen/y20"
     android:textSize="@dimen/y28"
     android:hint="content"
+    android:minWidth="@dimen/y300"
+    android:selectAllOnFocus="true"
     android:textColor="#444"
     android:textCursorDrawable="@drawable/cursor_shape"/>
 

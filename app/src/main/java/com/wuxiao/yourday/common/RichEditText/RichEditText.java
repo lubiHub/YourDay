@@ -30,12 +30,13 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-
 import com.wuxiao.yourday.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -209,7 +210,7 @@ public class RichEditText extends ScrollView implements EditTextDataI {
 
         initTitleLayout();
 
-        initLineView();
+
 
         initContainerLayout();
 
@@ -237,7 +238,7 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         lineLayoutParams.leftMargin = DEFAULT_MARGING;
         lineLayoutParams.rightMargin = DEFAULT_MARGING;
         lineView.setLayoutParams(lineLayoutParams);
-        parentLayout.addView(lineView);
+        titleLayout.addView(lineView);
     }
 
     /**
@@ -263,6 +264,7 @@ public class RichEditText extends ScrollView implements EditTextDataI {
 
         LinearLayout.LayoutParams textLimitLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         textLimitLayoutParams.rightMargin = DEFAULT_MARGING;
+        textLimitLayoutParams.topMargin=DEFAULT_MARGING/2;
         textLimitLayoutParams.gravity = Gravity.RIGHT;
         tvTextLimit.setLayoutParams(textLimitLayoutParams);
 
@@ -299,8 +301,9 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         etTitle.setLayoutParams(editTitleLayoutParams);
 
         titleLayout.addView(etTitle);
-
+        initLineView();
         titleLayout.addView(tvTextLimit);
+
     }
 
     public void setTextTitleHint() {
@@ -310,7 +313,7 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         editText.setText("");
         parentLayout.removeAllViews();
         initTitleLayout();
-        initLineView();
+
         initContainerLayout();
     }
 
@@ -702,6 +705,29 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         return editText;
     }
 
+
+    public void showMethodManager(){
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) mContext
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(0, InputMethodManager.SHOW_FORCED);
+            }
+
+        }, 100);
+    }
+    public void hideMethodManager(){
+        InputMethodManager imm = (InputMethodManager) mContext
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+    }
 
     /**
      * 生成图片Layout

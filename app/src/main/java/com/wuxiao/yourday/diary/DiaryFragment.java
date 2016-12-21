@@ -273,11 +273,14 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
             location1 = new StringBuilder();
             location1.append(aMapLocation.getCity());
             location1.append(aMapLocation.getDistrict());
+            diary_location.setText(location1.toString());
         }
     }
 
     @Override
     public void onFragmentVisible() {
+
+        note_rich.showMethodManager();
         if (location1!=null) {
             diary_location.setText(location1.toString());
         }else{
@@ -288,6 +291,7 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
     @Override
     public void onFragmentInvisible() {
 
+        note_rich.hideMethodManager();
     }
 
 }

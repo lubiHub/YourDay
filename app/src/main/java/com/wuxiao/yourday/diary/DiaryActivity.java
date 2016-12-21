@@ -160,6 +160,7 @@ public class DiaryActivity extends BaseActivity<DiaryPresenter> implements Diary
             photo.setImageDrawable(getResources().getDrawable(R.drawable.icon_photo));
             note_rich.setVisibility(View.VISIBLE);
             diary_content.setVisibility(View.GONE);
+            note_rich.showMethodManager();
         }
     }
 
