@@ -37,6 +37,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import rx.Observable;
+import rx.Subscription;
+import rx.functions.Action1;
+
 import static com.wuxiao.yourday.common.popup.WeatherPopup.getMenu;
 
 
@@ -68,7 +72,7 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
     private AMapLocationClient client;
     private TextView diary_location;
     private StringBuilder location1;
-
+    private Subscription subscribe;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,19 +180,29 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
                 List<EditTextData> editList = note_rich.GetEditData();
 
 
-                StringBuilder content = new StringBuilder();
-                for (EditTextData itemData : editList) {
-                    if (itemData.getInputStr() != null) {
-                        content.append(itemData.getInputStr()).append("*");
-                    } else if (itemData.getImagePath() != null) {
-                        content.append(itemData.getImagePath()).append("*");
+                final StringBuilder content = new StringBuilder();
 
+                subscribe = Observable.from(editList).subscribe(new Action1<EditTextData>() {
+                    @Override
+                    public void call(EditTextData data) {
+                        if (data.getInputStr() != null) {
+
+                            content.append(data.getInputStr()).append("*");
+                        } else if (data.getImagePath() != null) {
+
+                            content.append(data.getImagePath()).append("*");
+                        }
                     }
-                }
+                });
                 String title = note_rich.getTitleData();
                 long createTime = calendar.getTimeInMillis();
                 if (!TextUtils.isEmpty(title) && !TextUtils.isEmpty(content)) {
-                    mPresenter.insertNote(title, content.toString(), createTime, weatherPisition,location1.toString());
+                    if (location1.toString()!=null) {
+                        mPresenter.insertNote(title, content.toString(), createTime, weatherPisition, location1.toString());
+                    }else{
+                        mPresenter.insertNote(title, content.toString(), createTime, weatherPisition, "北京");
+
+                    }
                     weatherPisition = 0;
                     weather_icon.setImageResource(weatherList.get(0).icon);
 
@@ -274,5 +288,12 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
 
     @Override
     public void onFragmentInvisible() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        subscribe.unsubscribe();
     }
 }

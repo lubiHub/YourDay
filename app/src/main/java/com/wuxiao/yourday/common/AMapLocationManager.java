@@ -6,7 +6,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 
 /**
- * Created by masai on 2016/12/21.
+ * Created by wuxiaojian on 2016/12/21.
  */
 
 public class AMapLocationManager {

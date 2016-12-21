@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 /**
  * 
- * @author hitomi
+ * @author wuxiaojian
  * 尺寸工具类
  *
  */
