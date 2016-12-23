@@ -2,21 +2,24 @@ package com.wuxiao.yourday.common.RichEditText;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PointF;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.wuxiao.yourday.R;
+import com.wuxiao.yourday.common.ImageLoadFresco;
 
 
 public class RichTextView extends ScrollView {
@@ -27,12 +30,14 @@ public class RichTextView extends ScrollView {
     private TextView tvTextLimit;
     private int viewTagID = 1;
     private final int DEFAULT_IMAGE_HEIGHT = dip2px(300);
-    private WxImageLoader imageLoader;
+
     private LinearLayout containerLayout;
     public RichTextView(Context context) {
         this(context, null);
     }
     private Context context;
+    private int width;
+    private int height;
 
     public RichTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -42,10 +47,12 @@ public class RichTextView extends ScrollView {
         super(context, attrs, defStyleAttr);
         this.context =context;
         inflater = LayoutInflater.from(context);
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        width = wm.getDefaultDisplay().getWidth();
+        height = wm.getDefaultDisplay().getHeight();
         initParentLayout();
         initTitleLayout();
         initContainerLayout();
-        imageLoader = WxImageLoader.getInstance(3, WxImageLoader.Type.LIFO);
     }
 
     private void initParentLayout() {
@@ -68,12 +75,9 @@ public class RichTextView extends ScrollView {
         }
 
         if (isImage(content) ){
-            final RelativeLayout imageLayout = createImageLayout();
-            ImageView imageView = (ImageView) imageLayout.getChildAt(0);
-            PointF pointF = new PointF();
-            pointF.x = getWidth() - 2 * DEFAULT_MARGING;
-            pointF.y = DEFAULT_IMAGE_HEIGHT;
-            imageLoader.loadImage(content, imageView, pointF);
+            final RelativeLayout imageLayout = createImageLayout(content);
+            SimpleDraweeView imageView = (SimpleDraweeView) imageLayout.getChildAt(0);
+            new ImageLoadFresco.LoadImageFrescoBuilder(context, imageView, "file:///" + content).setIsRadius(true).build();
             imageView.setTag(content);
             containerLayout.addView(imageLayout, position);
 
@@ -126,31 +130,31 @@ public class RichTextView extends ScrollView {
         return textView;
     }
 
-    private RelativeLayout createImageLayout() {
+    private RelativeLayout createImageLayout(String content) {
+
         RelativeLayout.LayoutParams contentImageLp = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        ImageView imageView = new ImageView(getContext());
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(contentImageLp);
-        imageView.setImageResource(R.drawable.icon_empty_photo);
+        SimpleDraweeView  simpleDraweeView = (SimpleDraweeView) inflater.inflate(R.layout.drawee_view,
+                null);
+        simpleDraweeView.setLayoutParams(contentImageLp);
 
-        RelativeLayout.LayoutParams closeImageLp = new RelativeLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        closeImageLp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        closeImageLp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        closeImageLp.setMargins(0, dip2px(10), dip2px(10), 0);
         RelativeLayout layout = new RelativeLayout(getContext());
-        layout.addView(imageView);
+        layout.addView(simpleDraweeView);
         layout.setTag(viewTagID++);
         setFocusOnView(layout, true);
 
-
+        int  bitmapWidth = getbitmapWidth(content);
+        int  bitmapHeight =getbitmapHeight(content);
+        if (getbitmapWidth(content)>width -width/3){
+            bitmapWidth =bitmapWidth -bitmapWidth/3;
+            bitmapHeight =bitmapHeight -bitmapHeight/3;
+        }
         // 调整imageView的外边距
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, DEFAULT_IMAGE_HEIGHT);
+                bitmapWidth, bitmapHeight);
         lp.bottomMargin = DEFAULT_MARGING;
         lp.leftMargin = DEFAULT_MARGING;
-        lp.rightMargin= DEFAULT_MARGING;
+        lp.rightMargin = DEFAULT_MARGING;
         layout.setLayoutParams(lp);
 
         return layout;
@@ -237,5 +241,19 @@ public class RichTextView extends ScrollView {
         view.setFocusable(isFocusable);
         view.setFocusableInTouchMode(isFocusable);
 
+    }
+
+    public int getbitmapHeight(String content){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(content, options);
+
+        return options.outHeight;
+    }
+    public int getbitmapWidth(String content){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(content, options);
+        return options.outWidth;
     }
 }

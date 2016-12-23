@@ -2,9 +2,9 @@ package com.wuxiao.yourday.common.RichEditText;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.PointF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,7 +31,9 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.wuxiao.yourday.R;
+import com.wuxiao.yourday.common.ImageLoadFresco;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,14 +56,10 @@ public class RichEditText extends ScrollView implements EditTextDataI {
 
 
     /**
-     * 默认ImageView高度
-     */
-    private final int DEFAULT_IMAGE_HEIGHT = dip2px(300);
-
-    /**
      * 图文排序的时候，view默认缩小的高度
      */
     private final int SIZE_REDUCE_VIEW = dip2px(80);
+
 
     /**
      * 出发ScrollView滚动时，顶部与底部的偏移量
@@ -138,11 +137,6 @@ public class RichEditText extends ScrollView implements EditTextDataI {
     private LayoutTransition mTransitioner;
 
     /**
-     * 图片加载器
-     */
-    private WxImageLoader imageLoader;
-
-    /**
      * 用于实现拖动效果的帮助类
      */
     private ViewDragHelper viewDragHelper;
@@ -190,6 +184,8 @@ public class RichEditText extends ScrollView implements EditTextDataI {
     private Context mContext;
     private EditText editText;
     private List<EditTextData> dataList;
+    private int width;
+    private int height;
 
     public RichEditText(Context context) {
         this(context, null);
@@ -203,13 +199,14 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         super(context, attrs, defStyleAttr);
         mContext = context;
         inflater = LayoutInflater.from(context);
-
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        width = wm.getDefaultDisplay().getWidth();
+        height = wm.getDefaultDisplay().getHeight();
         initListener();
 
         initParentLayout();
 
         initTitleLayout();
-
 
 
         initContainerLayout();
@@ -219,8 +216,6 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         dashDrawable.setStroke(dip2px(1), Color.parseColor("#4CA4E9"), dip2px(4), dip2px(3));
         dashDrawable.setColor(Color.parseColor("#ffffff"));
 
-        // 初始化图片加载器
-        imageLoader = WxImageLoader.getInstance(3, WxImageLoader.Type.LIFO);
 
         // 初始化ViewDragHelper
         viewDragHelper = ViewDragHelper.create(containerLayout, 1.5f, new ViewDragHelperCallBack());
@@ -264,7 +259,7 @@ public class RichEditText extends ScrollView implements EditTextDataI {
 
         LinearLayout.LayoutParams textLimitLayoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         textLimitLayoutParams.rightMargin = DEFAULT_MARGING;
-        textLimitLayoutParams.topMargin=DEFAULT_MARGING/2;
+        textLimitLayoutParams.topMargin = DEFAULT_MARGING / 2;
         textLimitLayoutParams.gravity = Gravity.RIGHT;
         tvTextLimit.setLayoutParams(textLimitLayoutParams);
 
@@ -465,92 +460,6 @@ public class RichEditText extends ScrollView implements EditTextDataI {
     }
 
     /**
-     * 获取排序之前子View的LayoutParams用于还原子View大小
-     *
-     * @param child
-     * @return
-     */
-    private ViewGroup.LayoutParams resetChildLayoutParams(View child) {
-        ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
-        if (child instanceof RelativeLayout) { // 图片
-            layoutParams.height = DEFAULT_IMAGE_HEIGHT;
-        }
-        if (child instanceof EditText) { // 文本编辑框
-            child.setFocusable(true);
-            child.setFocusableInTouchMode(true);
-            if (child == lastFocusEdit) {
-                child.requestFocus();
-            }
-            child.setBackgroundDrawable(editTextBackground);
-            layoutParams.height = editTextHeightArray.get(Integer.parseInt(child.getTag().toString()));
-        }
-        return layoutParams;
-    }
-
-
-    /**
-     * 开始图文排序
-     * 图片与文字段落高度缩小为默认高度{@link #SIZE_REDUCE_VIEW}
-     * 且图片与文字可以上下拖动
-     */
-    private void prepareSortUI() {
-        int childCount = containerLayout.getChildCount();
-
-        if (childCount != 0) {
-            if (preSortPositionArray == null) {
-                preSortPositionArray = new SparseArray<>();
-            } else {
-                preSortPositionArray.clear();
-            }
-        }
-
-        List<View> removeChildList = new ArrayList<>();
-
-        View child;
-        int pos, preIndex = 0;
-        for (int i = 0; i < childCount; i++) {
-            child = containerLayout.getChildAt(i);
-
-            if (child instanceof ImageView) {
-                removeChildList.add(child);
-                continue;
-            }
-
-            if (child instanceof RelativeLayout) {
-                ((RelativeLayout) child).getChildAt(1).setVisibility(View.GONE);
-                setFocusOnView(child, false);
-            }
-
-            int tagID = Integer.parseInt(child.getTag().toString());
-            ViewGroup.LayoutParams layoutParams = child.getLayoutParams();
-            if (child instanceof EditText) { // 文本编辑框
-                EditText editText = ((EditText) child);
-                editTextHeightArray.put(tagID, layoutParams.height);
-                editText.setFocusable(false);
-                editText.setBackgroundDrawable(dashDrawable);
-            }
-
-            layoutParams.height = SIZE_REDUCE_VIEW;
-            child.setLayoutParams(layoutParams);
-            if (i == 0) {
-                preIndex = tagID;
-                pos = DEFAULT_MARGING;
-            } else {
-                pos = SIZE_REDUCE_VIEW + DEFAULT_MARGING + preSortPositionArray.get(preIndex);
-
-                preIndex = tagID;
-            }
-            preSortPositionArray.put(tagID, pos);
-        }
-
-        if (!removeChildList.isEmpty()) { // 移除所有的“可编辑文本”图标
-            for (View removeChild : removeChildList) {
-                containerLayout.removeView(removeChild);
-            }
-        }
-    }
-
-    /**
      * 处理软键盘backSpace回退事件
      *
      * @param editTxt 光标所在的文本输入框
@@ -659,12 +568,11 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         lastFocusEdit.setHint("");
 
         if (isImage(content)) {
-            final RelativeLayout imageLayout = createImageLayout();
-            ImageView imageView = (ImageView) imageLayout.getChildAt(0);
-            PointF pointF = new PointF();
-            pointF.x = getWidth() - 2 * DEFAULT_MARGING;
-            pointF.y = DEFAULT_IMAGE_HEIGHT;
-            imageLoader.loadImage(content, imageView, pointF);
+
+            final RelativeLayout imageLayout = createImageLayout(content);
+            SimpleDraweeView imageView = (SimpleDraweeView) imageLayout.getChildAt(0);
+            new ImageLoadFresco.LoadImageFrescoBuilder(mContext, imageView, "file:///" + content).setIsRadius(true).build();
+
             imageView.setTag(content);
 
 
@@ -706,7 +614,7 @@ public class RichEditText extends ScrollView implements EditTextDataI {
     }
 
 
-    public void showMethodManager(){
+    public void showMethodManager() {
         editText.setFocusable(true);
         editText.setFocusableInTouchMode(true);
         editText.requestFocus();
@@ -722,7 +630,8 @@ public class RichEditText extends ScrollView implements EditTextDataI {
 
         }, 100);
     }
-    public void hideMethodManager(){
+
+    public void hideMethodManager() {
         InputMethodManager imm = (InputMethodManager) mContext
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
@@ -731,32 +640,30 @@ public class RichEditText extends ScrollView implements EditTextDataI {
 
     /**
      * 生成图片Layout
+     * @param content
      */
-    private RelativeLayout createImageLayout() {
+    private RelativeLayout createImageLayout(String content) {
+
         RelativeLayout.LayoutParams contentImageLp = new RelativeLayout.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        ImageView imageView = new ImageView(getContext());
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(contentImageLp);
-        imageView.setImageResource(R.drawable.icon_empty_photo);
-
-        RelativeLayout.LayoutParams closeImageLp = new RelativeLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        closeImageLp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        closeImageLp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        closeImageLp.setMargins(0, dip2px(10), dip2px(10), 0);
-
+        SimpleDraweeView  simpleDraweeView = (SimpleDraweeView) inflater.inflate(R.layout.drawee_view,
+                null);
+        simpleDraweeView.setLayoutParams(contentImageLp);
 
         RelativeLayout layout = new RelativeLayout(getContext());
-        layout.addView(imageView);
-
+        layout.addView(simpleDraweeView);
         layout.setTag(viewTagID++);
         setFocusOnView(layout, true);
 
-
+        int  bitmapWidth = getbitmapWidth(content);
+        int  bitmapHeight =getbitmapHeight(content);
+        if (getbitmapWidth(content)>width -width/3){
+            bitmapWidth =bitmapWidth -bitmapWidth/3;
+            bitmapHeight =bitmapHeight -bitmapHeight/3;
+        }
         // 调整imageView的外边距
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LayoutParams.MATCH_PARENT, DEFAULT_IMAGE_HEIGHT);
+                bitmapWidth, bitmapHeight);
         lp.bottomMargin = DEFAULT_MARGING;
         lp.leftMargin = DEFAULT_MARGING;
         lp.rightMargin = DEFAULT_MARGING;
@@ -776,6 +683,19 @@ public class RichEditText extends ScrollView implements EditTextDataI {
         }
     }
 
+    public int getbitmapHeight(String content){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(content, options);
+
+        return options.outHeight;
+    }
+    public int getbitmapWidth(String content){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeFile(content, options);
+        return options.outWidth;
+    }
     /**
      * 插入图片前的预处理
      */
@@ -886,14 +806,11 @@ public class RichEditText extends ScrollView implements EditTextDataI {
             }
         }
 
-        final RelativeLayout imageLayout = createImageLayout();
-        ImageView imageView = (ImageView) imageLayout.getChildAt(0);
-        PointF pointF = new PointF();
-        pointF.x = getWidth() - 2 * DEFAULT_MARGING;
-        pointF.y = DEFAULT_IMAGE_HEIGHT;
-        imageLoader.loadImage(imagePath, imageView, pointF);
-        imageView.setTag(imagePath);
+        final RelativeLayout imageLayout = createImageLayout(imagePath);
+        SimpleDraweeView imageView = (SimpleDraweeView) imageLayout.getChildAt(0);
+        new ImageLoadFresco.LoadImageFrescoBuilder(mContext, imageView, "file:///" + imagePath).setIsRadius(true).build();
 
+        imageView.setTag(imagePath);
         final int finalIndex = index;
         if (isBatch) {
             // 批量插入需要立即执行，否则index错误（舍弃动画效果）
@@ -1050,10 +967,8 @@ public class RichEditText extends ScrollView implements EditTextDataI {
                 EditText item = (EditText) itemView;
                 itemData.setInputStr(item.getText().toString());
             } else if (itemView instanceof RelativeLayout) {
-                ImageView item = (ImageView) ((RelativeLayout) itemView).getChildAt(0);
+                SimpleDraweeView item = (SimpleDraweeView) ((RelativeLayout) itemView).getChildAt(0);
                 itemData.setImagePath(item.getTag().toString());
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) item.getDrawable();
-                itemData.setBitmap(bitmapDrawable.getBitmap());
             }
             dataList.add(itemData);
         }

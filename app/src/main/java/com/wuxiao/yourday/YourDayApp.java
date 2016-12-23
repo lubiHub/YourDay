@@ -3,6 +3,7 @@ package com.wuxiao.yourday;
 import android.app.Application;
 import android.content.Context;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.wuxiao.yourday.common.AMapLocationManager;
 import com.wuxiao.yourday.common.GreenDaoManager;
 
@@ -21,6 +22,7 @@ public class YourDayApp extends Application {
         mContext = this;
         GreenDaoManager.getInstance();
         AMapLocationManager.getInstance(this);
+        Fresco.initialize(this);
     }
 
     public static Context getContext() {

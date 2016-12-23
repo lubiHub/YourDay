@@ -173,28 +173,6 @@ public class PhotoPickerActivity extends Activity implements View.OnClickListene
     }
 
     /**
-     * 获取指定路径下的所有图片文件
-     * @param folderPath
-     * @return
-     */
-    private List<String> getPhotosByFolder(String folderPath) {
-        File folder = new File(folderPath);
-        String[] allFileNames = folder.list();
-        if (allFileNames == null || allFileNames.length == 0) {
-            return null;
-        }
-
-        List<String> photoFilePaths = new ArrayList<String>();
-        for (int i = allFileNames.length - 1; i >= 0; i--) {
-            if (isImage(allFileNames[i])) {
-                photoFilePaths.add(folderPath + File.separator + allFileNames[i]);
-            }
-        }
-
-        return photoFilePaths;
-    }
-
-    /**
      * 使用ContentProvider读取SD卡所有图片。
      */
     private List<Photo> getAllPhotoPaths() {

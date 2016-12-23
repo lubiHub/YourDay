@@ -7,23 +7,27 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.wuxiao.yourday.R;
 import com.wuxiao.yourday.bean.Photo;
-import com.wuxiao.yourday.common.RichEditText.WxImageLoader;
+import com.wuxiao.yourday.common.ImageLoadFresco;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.R.attr.path;
+
 /**
- * Created by hitomi on 2016/6/14.
+ * Created by wuxiao on 2016/6/14.
  */
 public class PhotoWallAdapter extends BaseAdapterHelper<String> {
 
-    private WxImageLoader imageLoader = WxImageLoader.getInstance(3, WxImageLoader.Type.LIFO);
+
 
     private Photo defaultPhotoPack;
+    private Context context;
 
 
 
@@ -41,6 +45,7 @@ public class PhotoWallAdapter extends BaseAdapterHelper<String> {
         super(context, dataList, itemLayoutID);
 
         this.defaultPhotoPack = defaultPhotoPack;
+        this.context = context;
 
         selectMap = new LinkedHashMap<>();
         selectionMap = new LinkedHashMap<>();
@@ -49,14 +54,10 @@ public class PhotoWallAdapter extends BaseAdapterHelper<String> {
 
     @Override
     public void convert(ViewHolder viewHolder, final String item, int position) {
-        ImageView ivPhoto = viewHolder.getView(R.id.iv_photo);
+        SimpleDraweeView ivPhoto = viewHolder.getView(R.id.iv_photo);
         CheckBox checkBox = viewHolder.getView(R.id.checkbox);
-
-        // 先设置为默认图片
-        ivPhoto.setImageResource(R.drawable.icon_empty_photo);
-        // 再根据路径异步加载相册中的照片
-        imageLoader.loadImage(item, ivPhoto);
-
+        new ImageLoadFresco.LoadImageFrescoBuilder(context, ivPhoto, "file:///" + item).setIsRadius(true).build();
+        ivPhoto.setTag(path);
         checkBox.setTag(R.id.tag_position, position);
         checkBox.setTag(R.id.tag_photo, ivPhoto);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
