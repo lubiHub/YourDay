@@ -71,6 +71,7 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
     private AMapLocationClient client;
     private TextView diary_location;
     private StringBuilder location1;
+    private LinearLayout note_rich_linear;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,8 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
         weather_icon.setImageResource(weatherList.get(0).icon);
         fragment.findViewById(R.id.save).setOnClickListener(this);
         buttom_toolbar = (LinearLayout) fragment.findViewById(R.id.buttom_toolbar);
+        note_rich_linear = (LinearLayout) fragment.findViewById(R.id.note_rich_linear);
+        note_rich_linear.setOnClickListener(this);
         buttom_toolbar.setBackgroundColor(ThemeManager.getInstance().getThemeColor(getActivity()));
         diary_time_information.setOnClickListener(this);
         diary_time_information.setBackgroundColor(ThemeManager.getInstance().getThemeColor(getActivity()));
@@ -223,6 +226,9 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
             case R.id.weather_icon:
                 weatherPopup.showPopupWindow();
                 break;
+            case R.id.note_rich_linear:
+                note_rich.showMethodManager();
+                break;
             default:
                 break;
         }
@@ -279,8 +285,6 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
 
     @Override
     public void onFragmentVisible() {
-
-        note_rich.showMethodManager();
         if (location1!=null) {
             diary_location.setText(location1.toString());
         }else{
@@ -290,7 +294,6 @@ public class DiaryFragment extends BaseFragment<DiaryPresenter> implements Diary
 
     @Override
     public void onFragmentInvisible() {
-
         note_rich.hideMethodManager();
     }
 

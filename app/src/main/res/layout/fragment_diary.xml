@@ -16,8 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:orientation="vertical">
 
             <View
@@ -123,14 +121,15 @@
 
 
             <LinearLayout
+                android:id="@+id/note_rich_linear"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <com.wuxiao.yourday.common.RichEditText.RichEditText
                     android:id="@+id/note_rich"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:background="#fff" />
 
 
