@@ -2,6 +2,7 @@
 </br>用到目前主流的技术，Rxjava，mvp等。数据库用greenDAO
 </br>第一版：
       </br>     主要是本地数据库的增删改查
+      </br>   1.1.3 版本,使用facebook的fresco对图片操作进行优化，图片等比例存放
 </br>第二版（正在开发）：
       </br>     进行云备份,日记交换功能（服务端准备用GO写，也会开源）
    </br>希望大家支持！！！
@@ -15,3 +16,4 @@
 ![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_5.jpg)
 ![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_6.jpg)
 ![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_7.jpg)
+![image](https://github.com/quiet-wuxiao/YourDay/blob/master/preview/YouDay_8.jpg)
